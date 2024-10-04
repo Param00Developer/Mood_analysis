@@ -3,6 +3,7 @@ from utils.db_connect import connect
 from utils.write_to_json import write_dict_to_json,start_json_file,end_json_file
 
 OUTPUT_JSON_PATH = 'output_data.json'
+BATCH_SIZE=50
 
 
 def getMonogoPipeline(date,limit=0,skip=0):
@@ -124,12 +125,13 @@ def transformer(date):
         date=str(date_object.date())
         i=0
         start_json_file(OUTPUT_JSON_PATH)
+        batch_size=BATCH_SIZE
         while True:
-            limit = 50  # Number of records to fetch per batch
+            limit = batch_size  # Number of records to fetch per batch
             offset = i  # Start from the first record
             print(f"Limit : {limit}, Offset :{offset}")
             # Fetch the first batch
-            pipeline = getMonogoPipeline(date, limit, offset)
+            pipeline = getMonogoPipeline(date, limit, offset*batch_size)
             user_details=getUserDetails(pipeline)
             print("🚀 ~ User_details:",user_details)
             write_dict_to_json(user_details,OUTPUT_JSON_PATH)
